@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import 'widgets/time_tab_bar.dart';
-import 'widgets/screen_time_card.dart';
-import 'widgets/hourly_pattern_chart.dart';
-import 'widgets/category_card.dart';
-import 'widgets/app_comparison_row.dart';
+import 'widgets/conversion_summary_card.dart';
+import 'widgets/skill_conversion_card.dart';
 
-class UsageScreen extends StatefulWidget {
-  const UsageScreen({super.key});
+class ConvertScreen extends StatefulWidget {
+  const ConvertScreen({super.key});
 
   @override
-  State<UsageScreen> createState() => _UsageScreenState();
+  State<ConvertScreen> createState() => _ConvertScreenState();
 }
 
-class _UsageScreenState extends State<UsageScreen>
+class _ConvertScreenState extends State<ConvertScreen>
     with TickerProviderStateMixin {
-  int _selectedTab = 0;
   late final AnimationController _animController;
   late final List<Animation<double>> _fadeAnims;
   late final List<Animation<Offset>> _slideAnims;
 
-  static const int _itemCount = 10;
+  static const int _itemCount = 8;
 
   @override
   void initState() {
@@ -31,8 +27,8 @@ class _UsageScreenState extends State<UsageScreen>
     );
 
     _fadeAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(
           parent: _animController,
@@ -42,8 +38,8 @@ class _UsageScreenState extends State<UsageScreen>
     });
 
     _slideAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
           .animate(
         CurvedAnimation(
@@ -89,7 +85,7 @@ class _UsageScreenState extends State<UsageScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Usage',
+                      'Convert',
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
@@ -98,7 +94,7 @@ class _UsageScreenState extends State<UsageScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Today\'s screen time breakdown',
+                      'Turn wasted time into real skills',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -109,29 +105,15 @@ class _UsageScreenState extends State<UsageScreen>
               ),
               const SizedBox(height: 20),
 
-              // Tab bar
-              _animated(
-                1,
-                TimeTabBar(
-                  selectedIndex: _selectedTab,
-                  onTap: (i) => setState(() => _selectedTab = i),
-                ),
-              ),
+              // Conversion Summary
+              _animated(1, const ConversionSummaryCard()),
               const SizedBox(height: 20),
 
-              // Total Screen Time
-              _animated(2, const ScreenTimeCard()),
-              const SizedBox(height: 16),
-
-              // Hourly Pattern
-              _animated(3, const HourlyPatternChart()),
-              const SizedBox(height: 20),
-
-              // Category Split
+              // Section Label
               _animated(
-                4,
+                2,
                 Text(
-                  'CATEGORY SPLIT',
+                  'SKILL CONVERSIONS',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -141,45 +123,67 @@ class _UsageScreenState extends State<UsageScreen>
                 ),
               ),
               const SizedBox(height: 12),
+
+              // Skill cards
+              _animated(
+                3,
+                const SkillConversionCard(
+                  icon: Icons.menu_book_rounded,
+                  accentColor: AppColors.accentCyan,
+                  skillName: 'Reading',
+                  convertedValue: '383 pg',
+                  subtitle: 'pages you could\'ve read',
+                  progress: 0.75,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _animated(
+                4,
+                const SkillConversionCard(
+                  icon: Icons.code_rounded,
+                  accentColor: AppColors.accentBlue,
+                  skillName: 'Coding',
+                  convertedValue: '17 lessons',
+                  subtitle: 'programming tutorials missed',
+                  progress: 0.55,
+                ),
+              ),
+              const SizedBox(height: 10),
               _animated(
                 5,
-                const CategoryCard(
-                  label: 'Social Media',
-                  value: '4h 15m',
-                  color: AppColors.accentPink,
+                const SkillConversionCard(
+                  icon: Icons.diamond_rounded,
+                  accentColor: AppColors.accentGreen,
+                  skillName: 'Vocabulary',
+                  convertedValue: '510 words',
+                  subtitle: 'new words you could learn',
+                  progress: 0.85,
                 ),
               ),
               const SizedBox(height: 10),
               _animated(
                 6,
-                const CategoryCard(
-                  label: 'Entertainment',
-                  value: '1h 10m',
-                  color: AppColors.accentRed,
+                const SkillConversionCard(
+                  icon: Icons.fitness_center_rounded,
+                  accentColor: AppColors.accentOrange,
+                  skillName: 'Fitness',
+                  convertedValue: '3 workouts',
+                  subtitle: 'full workout sessions',
+                  progress: 0.45,
                 ),
               ),
               const SizedBox(height: 10),
               _animated(
                 7,
-                const CategoryCard(
-                  label: 'Productivity',
-                  value: '45m',
-                  color: AppColors.accentGreen,
+                const SkillConversionCard(
+                  icon: Icons.self_improvement_rounded,
+                  accentColor: AppColors.accentTeal,
+                  skillName: 'Meditation',
+                  convertedValue: '8 sessions',
+                  subtitle: 'mindfulness sessions missed',
+                  progress: 0.65,
                 ),
               ),
-              const SizedBox(height: 10),
-              _animated(
-                8,
-                const CategoryCard(
-                  label: 'Others',
-                  value: '33m',
-                  color: AppColors.accentBlue,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // App Comparison
-              _animated(9, const AppComparisonRow()),
               const SizedBox(height: 24),
             ],
           ),

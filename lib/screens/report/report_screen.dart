@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import 'widgets/time_tab_bar.dart';
-import 'widgets/screen_time_card.dart';
-import 'widgets/hourly_pattern_chart.dart';
-import 'widgets/category_card.dart';
-import 'widgets/app_comparison_row.dart';
+import '../usage/widgets/time_tab_bar.dart';
+import 'widgets/report_summary_card.dart';
+import 'widgets/weekly_chart.dart';
+import 'widgets/insight_card.dart';
+import 'widgets/daily_breakdown_card.dart';
 
-class UsageScreen extends StatefulWidget {
-  const UsageScreen({super.key});
+class ReportScreen extends StatefulWidget {
+  const ReportScreen({super.key});
 
   @override
-  State<UsageScreen> createState() => _UsageScreenState();
+  State<ReportScreen> createState() => _ReportScreenState();
 }
 
-class _UsageScreenState extends State<UsageScreen>
+class _ReportScreenState extends State<ReportScreen>
     with TickerProviderStateMixin {
-  int _selectedTab = 0;
+  int _selectedTab = 1; // default to "Week"
   late final AnimationController _animController;
   late final List<Animation<double>> _fadeAnims;
   late final List<Animation<Offset>> _slideAnims;
 
-  static const int _itemCount = 10;
+  static const int _itemCount = 8;
 
   @override
   void initState() {
@@ -31,8 +31,8 @@ class _UsageScreenState extends State<UsageScreen>
     );
 
     _fadeAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(
           parent: _animController,
@@ -42,8 +42,8 @@ class _UsageScreenState extends State<UsageScreen>
     });
 
     _slideAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
           .animate(
         CurvedAnimation(
@@ -89,7 +89,7 @@ class _UsageScreenState extends State<UsageScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Usage',
+                      'Report',
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
@@ -98,7 +98,7 @@ class _UsageScreenState extends State<UsageScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Today\'s screen time breakdown',
+                      'Your weekly screen time analytics',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -119,19 +119,19 @@ class _UsageScreenState extends State<UsageScreen>
               ),
               const SizedBox(height: 20),
 
-              // Total Screen Time
-              _animated(2, const ScreenTimeCard()),
+              // Summary metrics
+              _animated(2, const ReportSummaryCard()),
               const SizedBox(height: 16),
 
-              // Hourly Pattern
-              _animated(3, const HourlyPatternChart()),
+              // Weekly chart
+              _animated(3, const WeeklyChart()),
               const SizedBox(height: 20),
 
-              // Category Split
+              // Insights section
               _animated(
                 4,
                 Text(
-                  'CATEGORY SPLIT',
+                  'INSIGHTS',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -141,45 +141,32 @@ class _UsageScreenState extends State<UsageScreen>
                 ),
               ),
               const SizedBox(height: 12),
+
               _animated(
                 5,
-                const CategoryCard(
-                  label: 'Social Media',
-                  value: '4h 15m',
-                  color: AppColors.accentPink,
+                const InsightCard(
+                  icon: Icons.trending_up_rounded,
+                  accentColor: AppColors.accentRed,
+                  title: 'Usage Spike Detected',
+                  description:
+                      'Your screen time peaked on Thursday at 7h 36m. Try setting a reminder to take breaks.',
                 ),
               ),
               const SizedBox(height: 10),
               _animated(
                 6,
-                const CategoryCard(
-                  label: 'Entertainment',
-                  value: '1h 10m',
-                  color: AppColors.accentRed,
+                const InsightCard(
+                  icon: Icons.emoji_events_rounded,
+                  accentColor: AppColors.accentGreen,
+                  title: 'Weekend improvement!',
+                  description:
+                      'You reduced usage by 32% on weekends compared to last week. Keep it up!',
                 ),
               ),
-              const SizedBox(height: 10),
-              _animated(
-                7,
-                const CategoryCard(
-                  label: 'Productivity',
-                  value: '45m',
-                  color: AppColors.accentGreen,
-                ),
-              ),
-              const SizedBox(height: 10),
-              _animated(
-                8,
-                const CategoryCard(
-                  label: 'Others',
-                  value: '33m',
-                  color: AppColors.accentBlue,
-                ),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // App Comparison
-              _animated(9, const AppComparisonRow()),
+              // Daily breakdown
+              _animated(7, const DailyBreakdownCard()),
               const SizedBox(height: 24),
             ],
           ),

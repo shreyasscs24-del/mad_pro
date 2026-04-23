@@ -3,6 +3,9 @@ import '../constants/app_colors.dart';
 import '../widgets/bottom_nav_bar.dart';
 import 'home/home_screen.dart';
 import 'usage/usage_screen.dart';
+import 'convert/convert_screen.dart';
+import 'report/report_screen.dart';
+import 'goals/goals_screen.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -17,45 +20,33 @@ class _MainScaffoldState extends State<MainScaffold> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const UsageScreen(),
-    // Placeholders for future pages
-    const _PlaceholderPage(title: 'Convert'),
-    const _PlaceholderPage(title: 'Report'),
-    const _PlaceholderPage(title: 'Goals'),
+    const ConvertScreen(),
+    const ReportScreen(),
+    const GoalsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(_currentIndex),
+          child: _pages[_currentIndex],
+        ),
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-      ),
-    );
-  }
-}
-
-class _PlaceholderPage extends StatelessWidget {
-  final String title;
-  const _PlaceholderPage({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
       ),
     );
   }

@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import 'widgets/time_tab_bar.dart';
-import 'widgets/screen_time_card.dart';
-import 'widgets/hourly_pattern_chart.dart';
-import 'widgets/category_card.dart';
-import 'widgets/app_comparison_row.dart';
+import 'widgets/streak_card.dart';
+import 'widgets/goal_card.dart';
+import 'widgets/active_challenge_card.dart';
 
-class UsageScreen extends StatefulWidget {
-  const UsageScreen({super.key});
+class GoalsScreen extends StatefulWidget {
+  const GoalsScreen({super.key});
 
   @override
-  State<UsageScreen> createState() => _UsageScreenState();
+  State<GoalsScreen> createState() => _GoalsScreenState();
 }
 
-class _UsageScreenState extends State<UsageScreen>
+class _GoalsScreenState extends State<GoalsScreen>
     with TickerProviderStateMixin {
-  int _selectedTab = 0;
   late final AnimationController _animController;
   late final List<Animation<double>> _fadeAnims;
   late final List<Animation<Offset>> _slideAnims;
 
-  static const int _itemCount = 10;
+  static const int _itemCount = 8;
 
   @override
   void initState() {
@@ -31,8 +28,8 @@ class _UsageScreenState extends State<UsageScreen>
     );
 
     _fadeAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(
           parent: _animController,
@@ -42,8 +39,8 @@ class _UsageScreenState extends State<UsageScreen>
     });
 
     _slideAnims = List.generate(_itemCount, (i) {
-      final start = (i * 0.08).clamp(0.0, 0.7);
-      final end = (start + 0.35).clamp(0.0, 1.0);
+      final start = (i * 0.1).clamp(0.0, 0.7);
+      final end = (start + 0.4).clamp(0.0, 1.0);
       return Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
           .animate(
         CurvedAnimation(
@@ -89,7 +86,7 @@ class _UsageScreenState extends State<UsageScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Usage',
+                      'Goals',
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
@@ -98,7 +95,7 @@ class _UsageScreenState extends State<UsageScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Today\'s screen time breakdown',
+                      'Track your digital wellness targets',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -109,29 +106,15 @@ class _UsageScreenState extends State<UsageScreen>
               ),
               const SizedBox(height: 20),
 
-              // Tab bar
-              _animated(
-                1,
-                TimeTabBar(
-                  selectedIndex: _selectedTab,
-                  onTap: (i) => setState(() => _selectedTab = i),
-                ),
-              ),
+              // Streak
+              _animated(1, const StreakCard()),
               const SizedBox(height: 20),
 
-              // Total Screen Time
-              _animated(2, const ScreenTimeCard()),
-              const SizedBox(height: 16),
-
-              // Hourly Pattern
-              _animated(3, const HourlyPatternChart()),
-              const SizedBox(height: 20),
-
-              // Category Split
+              // Goals section
               _animated(
-                4,
+                2,
                 Text(
-                  'CATEGORY SPLIT',
+                  'YOUR GOALS',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -141,45 +124,62 @@ class _UsageScreenState extends State<UsageScreen>
                 ),
               ),
               const SizedBox(height: 12),
+
+              _animated(
+                3,
+                const GoalCard(
+                  icon: Icons.phone_android,
+                  accentColor: AppColors.accentPink,
+                  title: 'Daily Screen Time',
+                  current: '4h 15m',
+                  target: '3h limit',
+                  progress: 0.85,
+                  isOnTrack: false,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _animated(
+                4,
+                const GoalCard(
+                  icon: Icons.group_rounded,
+                  accentColor: AppColors.accentPurple,
+                  title: 'Social Media Limit',
+                  current: '1h 20m',
+                  target: '2h limit',
+                  progress: 0.65,
+                  isOnTrack: true,
+                ),
+              ),
+              const SizedBox(height: 10),
               _animated(
                 5,
-                const CategoryCard(
-                  label: 'Social Media',
-                  value: '4h 15m',
-                  color: AppColors.accentPink,
+                const GoalCard(
+                  icon: Icons.menu_book_rounded,
+                  accentColor: AppColors.accentCyan,
+                  title: 'Reading Goal',
+                  current: '25 min',
+                  target: '30 min/day',
+                  progress: 0.83,
+                  isOnTrack: true,
                 ),
               ),
               const SizedBox(height: 10),
               _animated(
                 6,
-                const CategoryCard(
-                  label: 'Entertainment',
-                  value: '1h 10m',
-                  color: AppColors.accentRed,
-                ),
-              ),
-              const SizedBox(height: 10),
-              _animated(
-                7,
-                const CategoryCard(
-                  label: 'Productivity',
-                  value: '45m',
-                  color: AppColors.accentGreen,
-                ),
-              ),
-              const SizedBox(height: 10),
-              _animated(
-                8,
-                const CategoryCard(
-                  label: 'Others',
-                  value: '33m',
-                  color: AppColors.accentBlue,
+                const GoalCard(
+                  icon: Icons.code_rounded,
+                  accentColor: AppColors.accentBlue,
+                  title: 'Coding Practice',
+                  current: '40 min',
+                  target: '1h/day',
+                  progress: 0.67,
+                  isOnTrack: true,
                 ),
               ),
               const SizedBox(height: 20),
 
-              // App Comparison
-              _animated(9, const AppComparisonRow()),
+              // Active Challenge
+              _animated(7, const ActiveChallengeCard()),
               const SizedBox(height: 24),
             ],
           ),
