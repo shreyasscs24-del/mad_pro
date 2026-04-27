@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'constants/app_colors.dart';
-import 'screens/main_scaffold.dart';
+import 'screens/auth/login_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +33,7 @@ class SkillTimeApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainScaffold(),
+      home: const LoginScreen(),
     );
   }
 }
